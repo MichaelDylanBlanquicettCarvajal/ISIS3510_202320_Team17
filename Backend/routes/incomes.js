@@ -16,7 +16,7 @@ const authenticateJWT = (req, res, next) => {
   })(req, res, next);
 };
 
-router.post("/new", async (req, res) => {
+router.post("/new", authenticateJWT , async (req, res) => {
   try {
     const { amount, date, source, user } = req.body;
 
@@ -27,6 +27,8 @@ router.post("/new", async (req, res) => {
       user,
     });
 
+    req.user.balance = req.user.balance + amount;
+    await req.user.save();
     await income.save();
 
     return res
